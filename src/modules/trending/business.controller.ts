@@ -7,13 +7,13 @@ export const createBusiness = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { name, type, location, description, consultation, email, category, subcategory, business_image } = req.body;
+  const { name, type, lat, description, consultation, email, category, subcategory, business_image } = req.body;
 
   try {
     const businessData = {
       name,
       type,
-      location,
+      lat,
       description,
       consultation,
       business_image,

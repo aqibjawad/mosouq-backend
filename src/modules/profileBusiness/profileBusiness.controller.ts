@@ -10,16 +10,16 @@ const { ObjectId } = mongoose.Types;
 
 export const addRecord = async (req: Request, res: Response) => {
   try {
-    const { category, businessName, website, email, phone, city, zip, address, country, businessId, description, fromTime, toTime, location, logo, isOpen24_7 } = req["validData"];
+    const { category, businessName, website, email, phone, city, lat, address, country, businessId, description, fromTime, toTime, lang, logo } = req["validData"];
 
     const oldData = await Auth.findOne({ businessId });
     if (oldData) {
       await Auth.updateOne(
         { businessId },
-        { $set: { category, businessName, website, email, phone, city, zip, address, country, businessId, description, fromTime, toTime, location, logo,isOpen24_7 } }
+        { $set: { category, businessName, website, email, phone, city, lat, address, country, businessId, description, fromTime, toTime, lang, logo } }
       );
     } else {
-      await Auth.create({ category, businessName, website, email, phone, city, zip, address, country, businessId, description, fromTime, toTime, location, logo, isOpen24_7 });
+      await Auth.create({ category, businessName, website, email, phone, city, lat, address, country, businessId, description, fromTime, toTime, lang, logo });
     }
 
     return res.status(200).json({
@@ -33,7 +33,7 @@ export const addRecord = async (req: Request, res: Response) => {
 
 export const updateRecord = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { category, subcategory, businessName, website, email, phone, city, zip, address, country, businessId, description, isOpen24_7, fromTime, toTime, location, logo } = req["validData"];
+    const { category, subcategory, businessName, website, email, phone, city, lat, address, country, businessId, description, isOpen24_7, fromTime, toTime, location, logo } = req["validData"];
 
     const oldData = await Auth.findOne({ businessId });
 
@@ -43,7 +43,7 @@ export const updateRecord = async (req: Request, res: Response, next: NextFuncti
 
     await Auth.updateOne(
       { businessId },
-      { $set: { category, subcategory, businessName, website, email, phone, city, zip, address, country, businessId, description, isOpen24_7, fromTime, toTime, location, logo } }
+      { $set: { category, subcategory, businessName, website, email, phone, city, lat, address, country, businessId, description, isOpen24_7, fromTime, toTime, location, logo } }
     );
 
     return res.status(200).json({

@@ -4,7 +4,7 @@ import CategoryModel from '../category/category.model'; // Replace with the corr
 
 // Define the ISubCategory interface
 export interface ISubCategory extends Document {
-  // category: Schema.Types.ObjectId;
+  category: Schema.Types.ObjectId;
   sub_name: string;
   subcategory_image?: string;
   description?: string;

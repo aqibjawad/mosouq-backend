@@ -6,7 +6,6 @@ export interface IAuth extends Document {
   email: string;
   phone: string;
   city?: string;
-  zip: string;
   address?: string;
   country: string;
   businessId: Schema.Types.ObjectId;
@@ -15,7 +14,6 @@ export interface IAuth extends Document {
   description: string;
   fromTime: string;
   toTime: string;
-  location: string;
   images?: string[];
   logo: string;
   isOpen24_7: boolean;
@@ -42,10 +40,6 @@ const AuthSchema = new Schema<IAuth>(
     city: {
       type: String,
       required: false,
-    },
-    zip: {
-      type: String,
-      required: true,
     },
     address: {
       type: String,
@@ -79,10 +73,6 @@ const AuthSchema = new Schema<IAuth>(
       type: String,
       required: false,
     },
-    location: {
-      type: String,
-      required: false,
-    },
     images: {
       type: [String],
       required: false,
@@ -93,7 +83,6 @@ const AuthSchema = new Schema<IAuth>(
     },
     isOpen24_7: {
       type: Boolean,
-      required: false,
     },
   },
   { timestamps: true }
