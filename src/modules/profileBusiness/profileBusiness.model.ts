@@ -17,6 +17,11 @@ export interface IAuth extends Document {
   images?: string[];
   logo: string;
   isOpen24_7: boolean;
+  businesshours?: Array<{
+    day: string;
+    fromTime: string;
+    toTime: string;
+  }>; // Add this field
 }
 
 const AuthSchema = new Schema<IAuth>(
@@ -83,6 +88,16 @@ const AuthSchema = new Schema<IAuth>(
     },
     isOpen24_7: {
       type: Boolean,
+    },
+    businesshours: {
+      type: [
+        {
+          day: { type: String, required: true },
+          fromTime: { type: String, required: true },
+          toTime: { type: String, required: true },
+        },
+      ],
+      required: false,
     },
   },
   { timestamps: true }
