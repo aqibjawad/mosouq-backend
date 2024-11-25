@@ -4,9 +4,9 @@ import { CloudinaryStorage, Options } from "multer-storage-cloudinary";
 import axios from 'axios';
 import crypto from 'crypto';
 
-const api_key = '734597188996464';
-const api_secret = 'b0A0XL1kvN576Yq-U_8mvrfeiy0'
-const cloud_name = 'dvp7draz9'
+const api_key = '188736831177546';
+const api_secret = '8c6hBdlvqEqylF4PfpaAMEGKqeY'
+const cloud_name = 'df59vjsv5'
 
 cloudinary.config({
     cloud_name,
