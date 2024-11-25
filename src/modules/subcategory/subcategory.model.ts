@@ -13,7 +13,7 @@ export interface ISubCategory extends Document {
 // Define the SubCategory schema
 const subcategorySchema = new Schema<ISubCategory>(
   {
-    // category: { type: Schema.Types.ObjectId, ref: 'category' }, // Reference the Category model
+    category: { type: Schema.Types.ObjectId, ref: 'category' }, // Reference the Category model
     sub_name: { type: String },
     subcategory_image: { type: String },
     description: { type: String },

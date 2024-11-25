@@ -20,7 +20,7 @@ export const createSubCategory = async (req: Request, res: Response) => {
 
 export const getSubCategories = async (req: Request, res: Response) => {
   try {
-    const subcategories = await SubCategory.find();
+    const subcategories = await SubCategory.find().populate("category");
     res.status(200).json(subcategories);
     console.log(subcategories);
   } catch (error) {
