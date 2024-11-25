@@ -1,10 +1,10 @@
 import Deals from './deals.model';
 
 export const createDeal = async (req, res) => {
-  const { name, type, location, description, consultation, deal_image } = req.body;
+  const { name, type, address, lat, lang, description, consultation, deal_image } = req.body;
 
   try {
-    const businessData = { name, type, location, description, consultation, deal_image };
+    const businessData = { name, type, address, lat, lang, description, consultation, deal_image };
     const savedBusiness = await Deals.create(businessData);
 
     res.status(201).json({
