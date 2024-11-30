@@ -7,7 +7,7 @@ import { uploadToMemory } from '../../helpers/upload';
 const router = express.Router();
 
 
-router.post('/add-business-profile', validateKeyInputs({ key: 'body', inputArr: ["category", "businessName", "website", "email", "phone", "city", "address", "country", "businessId", "description", "-logo"] }), addRecord);
+router.post('/add-business-profile', addRecord);
 router.post('/updateBusinessProfile', validateKeyInputs({ key: 'body', inputArr: ["-category", "-businessName", "-website", "-email", "-phone", "-city", "-address", "-country", "businessId", "-description", "-isOpen24_7", "-fromTime", "-toTime", "-location", "-logo"] }), updateBusinessImages);
 router.post("/upload-multiple-files", uploadToMemory.array("files", 10), uploadMultipleFiles)
 router.post("/updateBusinessImages", updateBusinessImages)

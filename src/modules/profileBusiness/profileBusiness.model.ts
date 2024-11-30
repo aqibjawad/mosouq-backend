@@ -10,10 +10,11 @@ export interface IAuth extends Document {
   country: string;
   businessId: Schema.Types.ObjectId;
   category: Schema.Types.ObjectId;
+  subcategory: Schema.Types.ObjectId;
   businessPictures?: string[];
   description: string;
-  fromTime: string;
-  toTime: string;
+  lat: string;
+  lang: string;
   images?: string[];
   logo: string;
   isOpen24_7: boolean;
@@ -21,7 +22,7 @@ export interface IAuth extends Document {
     day: string;
     fromTime: string;
     toTime: string;
-  }>; // Add this field
+  }>;
 }
 
 const AuthSchema = new Schema<IAuth>(
@@ -62,6 +63,10 @@ const AuthSchema = new Schema<IAuth>(
       type: Schema.Types.ObjectId,
       ref: 'category',
     },
+    subcategory: {
+      type: Schema.Types.ObjectId,
+      ref: 'subcategory',
+    },
     businessPictures: {
       type: [String],
       required: false,
@@ -70,11 +75,11 @@ const AuthSchema = new Schema<IAuth>(
       type: String,
       required: true,
     },
-    toTime: {
+    lang: {
       type: String,
       required: false,
     },
-    fromTime: {
+    lat: {
       type: String,
       required: false,
     },

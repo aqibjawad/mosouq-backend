@@ -10,16 +10,17 @@ const { ObjectId } = mongoose.Types;
 
 export const addRecord = async (req: Request, res: Response) => {
   try {
-    const { category, businessName, website, email, phone, city, lat, address, country, businessId, description, fromTime, toTime, lang, logo, businesshours } = req["validData"];
+    const { category, subcategory, businessName, website, email, phone, city, lat, address, country, businessId, description, fromTime, toTime, lang, logo, businesshours, isOpen24_7 } = req.body;
+    
 
     const oldData = await Auth.findOne({ businessId });
     if (oldData) {
       await Auth.updateOne(
         { businessId },
-        { $set: { category, businessName, website, email, phone, city, lat, address, country, businessId, description, fromTime, toTime, lang, logo, businesshours } }
+        { $set: { category, subcategory, businessName, website, email, phone, city, lat, address, country, businessId, description, fromTime, toTime, lang, logo, businesshours, isOpen24_7 } }
       );
     } else {
-      await Auth.create({ category, businessName, website, email, phone, city, lat, address, country, businessId, description, fromTime, toTime, lang, logo, businesshours });
+      await Auth.create({ category, subcategory, businessName, website, email, phone, city, lat, address, country, businessId, description, fromTime, toTime, lang, logo, isOpen24_7, businesshours:JSON.parse(businesshours)  });
     }
 
     return res.status(200).json({
