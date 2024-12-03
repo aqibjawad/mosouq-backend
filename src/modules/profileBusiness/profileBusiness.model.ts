@@ -93,6 +93,8 @@ const AuthSchema = new Schema<IAuth>(
     },
     isOpen24_7: {
       type: Boolean,
+      default: false, // Set a default value
+      required: false
     },
     businesshours: {
       type: [
