@@ -37,11 +37,9 @@ const AuthSchema = new Schema<IAuth>(
     },
     email: {
       type: String,
-      required: true,
     },
     phone: {
       type: String,
-      required: true,
     },
     city: {
       type: String,
