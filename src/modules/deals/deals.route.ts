@@ -4,14 +4,19 @@ import {
     createDeal,
     getDeals,
     getDealById,
-    deleteDeal
+    deleteDeal,
+    updateDealImages, 
+    uploadMultipleFiles
 } from './deals.controller';
+import { uploadToMemory } from '../../helpers/upload';
 
 const router = express.Router();
 
 router.get('/get-deals', getDeals);
 
 router.post('/add-deal', createDeal);
+router.post("/upload-multiple-files", uploadToMemory.array("files", 10), uploadMultipleFiles)
+router.post("/updateDealsImages", updateDealImages)
 
 router.get('/get-deal/:id', getDealById);
 
