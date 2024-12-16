@@ -55,7 +55,6 @@ export const deleteCategory = async (req, res) => {
 export const updateCategory = async (req, res) => {
   const { id } = req.params;
   const { name, category_image } = req.body;
-  console.log("Request body:", req.body);
 
   try {
     const updateData: any = { name };

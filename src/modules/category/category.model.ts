@@ -15,19 +15,6 @@ const CategorySchema = new mongoose.Schema<ICategory>({
     timestamps: true
 });
 
-// CategorySchema.virtual('id').get(function () {
-//     return this._id.toString();
-// });
-
-// CategorySchema.set('toJSON', {
-//     virtuals: true,
-//     versionKey: false,
-//     //transform: function (doc, ret) {
-// //        delete ret._id;
-// //        return ret;
-// //    }
-// });
-
 const CategoryModel = mongoose.model<ICategory>('category', CategorySchema);
 
 export default CategoryModel;

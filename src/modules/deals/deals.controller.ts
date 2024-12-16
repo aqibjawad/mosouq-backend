@@ -4,29 +4,28 @@ import Deals from "./deals.model";
 import { NotFoundError } from "../../helpers/apiError";
 import { cloudinary } from "../../helpers/upload";
 
-export const createDeal = async (req, res) => {
-  const {
-    name,
-    type,
-    address,
-    lat,
-    lang,
-    description,
-    consultation,
-    businessName,
-    websitebusinessName,
-    website,
-    price,
-    discount,
-    dealId,
-  } = req.body;
+const { ObjectId } = mongoose.Types;
 
+export const createDeal = async (req: Request, res: Response) => {
   try {
-    // Check if a deal with the same name and address already exists
-    const oldData = await Deals.findOne({ dealId });
+    const {
+      name,
+      type,
+      address,
+      lat,
+      lang,
+      description,
+      consultation,
+      businessName,
+      websitebusinessName,
+      website,
+      price,
+      discount,
+      dealId,
+    } = req.body;
 
+    const oldData = await Deals.findOne({ dealId });
     if (oldData) {
-      // Update the existing deal
       await Deals.updateOne(
         { dealId },
         {
@@ -44,19 +43,9 @@ export const createDeal = async (req, res) => {
           },
         }
       );
-
-      const updatedDeal = await Deals.findOne({ dealId });
-
-      res.status(200).json({
-        message: "Deal updated successfully",
-        deal: updatedDeal,
-      });
     } else {
-      // Create a new deal
-      const dealData = {
-        name,
+      await Deals.create({
         type,
-        address,
         lat,
         lang,
         description,
@@ -66,18 +55,15 @@ export const createDeal = async (req, res) => {
         website,
         price,
         discount,
-      };
-      const savedDeal = await Deals.create(dealData);
-
-      res.status(201).json({
-        message: "Deal created successfully",
-        deal: savedDeal,
-        dealId: savedDeal._id, // Adding the ID to the response
       });
     }
+
+    return res.status(200).json({
+      message: "Deal updated successfully",
+      data: await Deals.findOne({ dealId }),
+    });
   } catch (error) {
-    console.error("Error occurred while creating or updating deal:", error);
-    res.status(500).json({ error: "An internal server error occurred" });
+    res.status(400).json({ error: error.message });
   }
 };
 

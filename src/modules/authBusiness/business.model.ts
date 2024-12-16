@@ -5,6 +5,7 @@ export interface IAuthBusiness extends Document {
     company: string;
     email: string;
     country: string;
+    website: string;
     phone: string;
     password?: string;
     terms: string;
@@ -34,6 +35,9 @@ const AuthBusinessSchema = new mongoose.Schema<IAuthBusiness>({
     country: {
         type: String,
         required: true
+    },
+    website: {
+        type: String,
     },
     phone: {
         type: String,
@@ -75,10 +79,6 @@ AuthBusinessSchema.virtual('id').get(function () {
 AuthBusinessSchema.set('toJSON', {
     virtuals: true,
     versionKey: false,
-    //transform: function (doc, ret) {
-    //        delete ret._id;
-    //        return ret;
-    //    }
 });
 
 const BusinessAuthModel = mongoose.model<IAuthBusiness>('business-auth', AuthBusinessSchema);

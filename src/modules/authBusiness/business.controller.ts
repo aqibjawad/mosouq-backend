@@ -10,11 +10,11 @@ const generateToken = (_id: string) => jwt.sign({ _id }, process.env.JWT_SECRET!
 
 export const signupBusiness = async (req: any, res: any) => {
   try {
-    const { email, name, company, phone, role, country, terms, url, title } = req.body;
+    const { email, name, company, phone, role, country, terms, url, title, website } = req.body;
 
     if (await Auth.findOne({ email }).lean()) throw new Error("Email is already in use");
 
-    const user = await Auth.create({ email, name, company, phone, role, country, terms, url, title });
+    const user = await Auth.create({ email, name, company, phone, role, country, terms, url, title, website });
     const token = generateToken(user.id);
     const otp = generateRandomSixDigitNumber();
     const mailToken = generateToken(`${user._id}:${email}:${otp}`);
@@ -58,7 +58,7 @@ export const signupBusiness = async (req: any, res: any) => {
 
 export const signupBusinessAdmin = async (req: any, res: any) => {
   try {
-    const { email, password, name, company, role, country } = req.body;
+    const { email, password, name, company, role, country, website, phone } = req.body;
 
     if (await Auth.findOne({ email }).lean()) throw new Error("Email is already in use");
 
@@ -72,7 +72,9 @@ export const signupBusinessAdmin = async (req: any, res: any) => {
       name, 
       company, 
       role, 
-      country
+      country,
+      website,
+      phone
     });
 
     const token = generateToken(user.id);

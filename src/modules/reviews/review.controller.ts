@@ -2,8 +2,10 @@ import { Request, Response } from "express";
 import ReviewModel from "./review.model";
 import UserModel from "../authentication/user.model";
 
+import BusinessModel from '../profileBusiness/profileBusiness.model';
+
 import jwt from "jsonwebtoken";
-import NextFunction from 'express';
+import NextFunction from "express";
 import { InternalServerError, NotFoundError } from "../../helpers/apiError";
 
 export const addRecord = async (req: Request, res: Response) => {
@@ -39,6 +41,53 @@ export const getApproved = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllApproved = async (req: Request, res: Response) => {
+  try {
+    const reviews = await ReviewModel.find({
+      ...req.query,
+      approved: true,
+    }).lean();
+
+    if (reviews.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    // Fetch user and business data for each review
+    const reviewsWithDetails = await Promise.all(
+      reviews.map(async (review) => {
+        const user = await UserModel.findById(review.userId).lean();
+        const business = await BusinessModel.findById(review.businessId).lean();
+
+        return {
+          ...review,
+          user: user
+            ? {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                // Include other user fields as needed
+              }
+            : null,
+          business: business
+            ? {
+                _id: business._id,
+                name: business.businessName,
+                address: business.address,
+                // Include other business fields as needed
+              }
+            : null,
+        };
+      })
+    );
+
+    res.status(200).json(reviewsWithDetails);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 export const getAll = async (req: Request, res: Response) => {
   try {
     const data = await ReviewModel.find({ ...req.query });
@@ -63,12 +112,13 @@ export const getCount = async (req: Request, res: Response) => {
 export const getReviewsByBusinessId = async (req: Request, res: Response) => {
   try {
     const businessId = req.params._id;
-    const reviews = await ReviewModel.find({ businessId: businessId, approved: true }).lean();
+    const reviews = await ReviewModel.find({
+      businessId: businessId,
+      approved: true,
+    }).lean();
 
     if (reviews.length === 0) {
-      return res
-        .status(200)
-        .json([]);
+      return res.status(200).json([]);
     }
 
     // Fetch user data for each review
@@ -79,11 +129,11 @@ export const getReviewsByBusinessId = async (req: Request, res: Response) => {
           ...review,
           user: user
             ? {
-              _id: user._id,
-              name: user.name,
-              email: user.email,
-              // Add any other user fields you want to include
-            }
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                // Add any other user fields you want to include
+              }
             : null,
         };
       })
@@ -110,7 +160,11 @@ export const deleteRecord = async (req: Request, res: Response) => {
   }
 };
 
-export const approveReview = async (req: Request, res: Response, next: NextFunction) => {
+export const approveReview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req["validData"];
     const review = await ReviewModel.findById(id);
@@ -120,9 +174,12 @@ export const approveReview = async (req: Request, res: Response, next: NextFunct
     review.approved = true;
     await review.save();
 
-    return res.status(200).json({ status: "success", message: "Review approved successfully", data: review });
+    return res.status(200).json({
+      status: "success",
+      message: "Review approved successfully",
+      data: review,
+    });
   } catch (error) {
     return next(new InternalServerError((error as Error).message));
   }
 };
-

@@ -1,5 +1,5 @@
 import express from 'express';
-import { addRecord, approveReview, deleteRecord, getAll, getApproved, getCount, getReviewsByBusinessId } from './review.controller';
+import { addRecord, approveReview, deleteRecord, getAllApproved, getAll, getApproved, getCount, getReviewsByBusinessId } from './review.controller';
 import { validateKeyInputs } from '../../middlewares/validate';
 
 const router = express.Router();
@@ -11,7 +11,9 @@ router.delete('/deleteRecord', deleteRecord);
 
 router.get('/getRecords', getApproved);
 
-router.get('/getAll', getAll);
+router.get('/getAll', getAllApproved);
+
+router.get('/getAllReviews', getAll);
 
 router.get('/getCount', getCount);
 
