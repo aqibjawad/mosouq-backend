@@ -29,11 +29,9 @@ const AuthSchema = new Schema<IAuth>(
   {
     businessName: {
       type: String,
-      required: true,
     },
     website: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
