@@ -21,46 +21,29 @@ export const createDeal = async (req: Request, res: Response) => {
       website,
       price,
       discount,
-      dealId,
     } = req.body;
 
-    const oldData = await Deals.findOne({ dealId });
-    if (oldData) {
-      await Deals.updateOne(
-        { dealId },
-        {
-          $set: {
-            type,
-            lat,
-            lang,
-            description,
-            consultation,
-            businessName,
-            websitebusinessName,
-            website,
-            price,
-            discount,
-          },
-        }
-      );
-    } else {
-      await Deals.create({
-        type,
-        lat,
-        lang,
-        description,
-        consultation,
-        businessName,
-        websitebusinessName,
-        website,
-        price,
-        discount,
-      });
-    }
+    const dealData = {
+      name,
+      type,
+      address,
+      lat,
+      lang,
+      description,
+      consultation,
+      businessName,
+      websitebusinessName,
+      website,
+      price,
+      discount,
+    };
+
+    const result = await Deals.create(dealData);
 
     return res.status(200).json({
-      message: "Deal updated successfully",
-      data: await Deals.findOne({ dealId }),
+      message: "Deal created successfully",
+      data: result,
+      dealId: result._id,
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -122,23 +105,22 @@ export async function uploadMultipleFiles(req: Request, res: Response) {
 
 export const updateDealImages = async (req: Request, res: Response) => {
   try {
-    const { dealId, images } = req.body;
+    const { dealId, images } = req.body; // Changed from dealId to id
 
     if (!dealId || !images) {
-      return res.status(400).json({ error: "Deal ID and images are required" });
+      return res.status(400).json({ error: "ID and images are required" });
     }
 
-    // Use findById instead of findOne with dealId
-    const oldData = await Deals.findById(dealId);
+    const oldData = await Deals.findById(dealId); // This already uses _id internally
 
     if (!oldData) {
       return res.status(404).json({ error: "Deal not found" });
     }
 
     const updatedData = await Deals.findByIdAndUpdate(
-      dealId,
+      dealId, // Using id directly - Mongoose will match this with _id
       { $set: { images } },
-      { new: true } // This returns the updated document
+      { new: true }
     );
 
     res.json({
