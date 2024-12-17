@@ -6,6 +6,8 @@ import SubcategoryModel from "../subcategory/subcategory.model";
 import { NotFoundError } from "../../helpers/apiError";
 import { cloudinary } from "../../helpers/upload";
 
+import BusinessAuthModel from "../authBusiness/business.model";
+
 const { ObjectId } = mongoose.Types;
 
 export const addRecord = async (req: Request, res: Response) => {
@@ -232,10 +234,27 @@ export const getProfile = async (req: Request, res: Response) => {
       businessId: new ObjectId(businessId),
     });
 
+    const authProfile = await BusinessAuthModel.findById(businessId);
+
+    const completeProfile = {
+      // Business Details from Business Model
+      ...profileData.toObject(), // Spread all business model fields
+
+      // Authentication Details from Business Auth Model
+      authDetails: authProfile
+        ? {
+            name: authProfile.name,
+            email: authProfile.email,
+            phone: authProfile.phone,
+            website: authProfile.website,
+          }
+        : null,
+    };
+
     if (!profileData) {
       res.status(404).json({ message: "Profile not found" });
     } else {
-      res.status(200).json(profileData);
+      res.status(200).json(completeProfile);
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -250,10 +269,17 @@ export const cateogyBusiness = async (req: Request, res: Response) => {
       throw new Error("Category ID is required");
     }
 
-    const profilesData = await Auth.find({ category });
+    // Populate method ka use karke category details ko directly include karein
+    const profilesData = await Auth.find({ category }).populate({
+      path: "category",
+      model: "category", // CategoryModel ka model name
+      select: "name category_image", // Specific fields jo chahiye
+    });
 
-    if (!profilesData) {
-      return res.status(404).json({ message: "Profile not found" });
+    if (!profilesData || profilesData.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No profiles found for this category" });
     } else {
       return res.status(200).json(profilesData);
     }
@@ -272,8 +298,11 @@ export const subCateogyBusiness = async (req: Request, res: Response) => {
 
     const profilesData = await Auth.find({ subcategory });
 
-    if (!profilesData) {
-      return res.status(404).json({ message: "Profile not found" });
+    // Length check added
+    if (!profilesData || profilesData.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No profiles found for this subcategory" });
     } else {
       return res.status(200).json(profilesData);
     }

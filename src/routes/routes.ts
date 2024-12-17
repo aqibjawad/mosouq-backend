@@ -19,6 +19,8 @@ import Utils from "../modules/utils/routes";
 
 import reviews from "../modules/reviews/review.route";
 
+import requestForm from "../modules/requestform/requestForm.route";
+
 export default function router(app: Application): void {
   app.use('/api/user', authRoutes);
   app.use('/api/business', businessRoutes);
@@ -39,4 +41,6 @@ export default function router(app: Application): void {
   app.use('/api/utils', Utils);
 
   app.use('/api/reviews', reviews);
+
+  app.use('/api/requestForm', requestForm);
 }

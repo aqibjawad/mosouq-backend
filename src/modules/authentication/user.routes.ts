@@ -4,7 +4,7 @@ import { signupUser, loginAuth, googleLogin, getUsers, getUserById, deleteUserBy
 const router = express.Router();
 
 router.post('/add-user', signupUser);
-// router.post('/login-user', loginAuth);
+router.post('/login-user', loginAuth);
 router.post('/update-password', updatePassword);
 router.post('/login-admin', loginAuth);
 router.post('/verify-login-otp', verifyLoginOtp);

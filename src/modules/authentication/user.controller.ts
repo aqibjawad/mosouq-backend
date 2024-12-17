@@ -78,7 +78,7 @@ export const loginAuth = async (req: Request, res: Response) => {
         email: user.email,
         name: user.name,
         Role: user.role,
-        Country: user.country,
+        phone: user.phone
       },
       message: "Login Successful",
     });
@@ -184,7 +184,6 @@ export const updatePassword = async (req: Request, res: Response) => {
 export const verifyLoginOtp = async (req: Request, res: Response) => {
   try {
     const { email, otp } = req.body;
-    console.log(req.body);
 
     if (!email || !otp) {
       throw new Error(`All fields must be fillekj;lj;lkj;lkj;lkjd ${otp}`);
