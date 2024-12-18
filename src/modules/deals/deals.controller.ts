@@ -171,3 +171,26 @@ export const getDealById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Function to get deals by type
+export const getDealsByType = async (req: Request, res: Response) => {
+  try {
+    const { type } = req.params; // Now this will correctly capture the type from the URL
+
+    const deals = await Deals.find({ type: type });
+
+    if (!deals || deals.length === 0) {
+      return res.status(404).json({
+        message: "No deals found with this type",
+        data: [],
+      });
+    }
+
+    return res.status(200).json({
+      message: "Deals fetched successfully",
+      data: deals,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

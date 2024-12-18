@@ -6,7 +6,8 @@ import {
     getDealById,
     deleteDeal,
     updateDealImages, 
-    uploadMultipleFiles
+    uploadMultipleFiles,
+    getDealsByType
 } from './deals.controller';
 import { uploadToMemory } from '../../helpers/upload';
 
@@ -17,6 +18,8 @@ router.get('/get-deals', getDeals);
 router.post('/add-deal', createDeal);
 router.post("/upload-multiple-files", uploadToMemory.array("files", 10), uploadMultipleFiles)
 router.post("/updateDealsImages", updateDealImages)
+
+router.get('/get-deal-type/:type', getDealsByType);
 
 router.get('/get-deal/:id', getDealById);
 

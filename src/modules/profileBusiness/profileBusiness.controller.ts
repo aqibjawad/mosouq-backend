@@ -269,25 +269,49 @@ export const cateogyBusiness = async (req: Request, res: Response) => {
       throw new Error("Category ID is required");
     }
 
-    // Populate method ka use karke category details ko directly include karein
+    // Fetch profiles with category details
     const profilesData = await Auth.find({ category }).populate({
       path: "category",
-      model: "category", // CategoryModel ka model name
-      select: "name category_image", // Specific fields jo chahiye
+      model: "category",
+      select: "name category_image",
     });
 
     if (!profilesData || profilesData.length === 0) {
       return res
         .status(404)
         .json({ message: "No profiles found for this category" });
-    } else {
-      return res.status(200).json(profilesData);
     }
+
+    // Fetch auth details for each profile based on businessId
+    const enhancedProfilesData = await Promise.all(
+      profilesData.map(async (profile) => {
+        // Changed this line to use BusinessAuthModel instead of Auth
+        const authProfile = await BusinessAuthModel.findById(
+          profile.businessId,
+          "name email phone website company"
+        );
+
+        return {
+          ...profile.toObject(),
+          authDetails: authProfile
+            ? {
+                name: authProfile.name,
+                email: authProfile.email,
+                phone: authProfile.phone,
+                website: authProfile.website,
+                company: authProfile.company,
+              }
+            : null,
+        };
+      })
+    );
+
+    return res.status(200).json(enhancedProfilesData);
   } catch (error) {
+    console.error("Error in cateogyBusiness:", error);
     return res.status(400).json({ error: error.message });
   }
 };
-
 export const subCateogyBusiness = async (req: Request, res: Response) => {
   try {
     const { subcategory } = req.query;
