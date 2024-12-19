@@ -320,16 +320,44 @@ export const subCateogyBusiness = async (req: Request, res: Response) => {
       throw new Error("Subcategory ID is required");
     }
 
-    const profilesData = await Auth.find({ subcategory });
+    // const profilesData = await Auth.find({ subcategory });
+    const profilesData = await Auth.find({ subcategory }).populate({
+      path: "subcategory",
+      model: "subcategory",
+      select: "sub_name subcategory_image",
+    });
 
     // Length check added
     if (!profilesData || profilesData.length === 0) {
       return res
         .status(404)
         .json({ message: "No profiles found for this subcategory" });
-    } else {
-      return res.status(200).json(profilesData);
     }
+
+    const enhancedProfilesData = await Promise.all(
+      profilesData.map(async (profile) => {
+        // Changed this line to use BusinessAuthModel instead of Auth
+        const authProfile = await BusinessAuthModel.findById(
+          profile.businessId,
+          "name email phone website company"
+        );
+
+        return {
+          ...profile.toObject(),
+          authDetails: authProfile
+            ? {
+                name: authProfile.name,
+                email: authProfile.email,
+                phone: authProfile.phone,
+                website: authProfile.website,
+                company: authProfile.company,
+              }
+            : null,
+        };
+      })
+    );
+
+    return res.status(200).json(enhancedProfilesData);
   } catch (error) {
     return res.status(400).json({ error: error.message });
   }
