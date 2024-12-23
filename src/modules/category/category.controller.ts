@@ -57,16 +57,18 @@ export const updateCategory = async (req, res) => {
   const { name, category_image } = req.body;
 
   try {
-    const updateData: any = { name };
-    if (category_image) {
-      updateData.category_image = category_image;
-    }
+    const updateData = { name, category_image };
+
+    // Add the new: true and runValidators: true options
     const updatedCategory = await Category.findByIdAndUpdate(id, updateData, {
-      new: true,
+      new: true, // This will return the updated document
+      runValidators: true, // This ensures any mongoose validations run
     });
+
     if (!updatedCategory) {
       return res.status(404).json({ message: "Category not found" });
     }
+
     res.status(200).json({
       message: "Category updated successfully",
       category: updatedCategory,

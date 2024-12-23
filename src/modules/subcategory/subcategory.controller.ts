@@ -55,3 +55,17 @@ export const getSubCategoryById = async (req: Request, res: Response) => {
     res.status(500).json({ error: "An internal server error occurred" });
   }
 };
+
+export const deleteSubCategory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedSubCategory = await SubCategory.findByIdAndDelete(id);
+    if (!deletedSubCategory) {
+      return res.status(404).json({ message: "subcategory not found" });
+    }
+    res.status(200).json({ message: "subcategory deleted successfully" });
+  } catch (error) {
+    console.error("Error occurred while deleting subcategory:", error);
+    res.status(500).json({ error: "An internal server error occurred" });
+  }
+};
