@@ -31,6 +31,8 @@ export const addRecord = async (req: Request, res: Response) => {
       logo,
       businesshours,
       isOpen24_7,
+      seoTitle,
+      seoDescrp
     } = req.body;
 
     const oldData = await Auth.findOne({ businessId });
@@ -57,6 +59,8 @@ export const addRecord = async (req: Request, res: Response) => {
             logo,
             businesshours,
             isOpen24_7,
+            seoTitle,
+            seoDescrp,
           },
         }
       );
@@ -79,6 +83,8 @@ export const addRecord = async (req: Request, res: Response) => {
         lang,
         logo,
         isOpen24_7,
+        seoTitle,
+        seoDescrp,
         businesshours: JSON.parse(businesshours),
       });
     }
@@ -116,6 +122,8 @@ export const updateRecord = async (
       toTime,
       location,
       logo,
+      seoTitle,
+      seoDescrp
     } = req["validData"];
 
     const oldData = await Auth.findOne({ businessId });

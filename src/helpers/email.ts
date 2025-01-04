@@ -12,8 +12,8 @@ async function sendMail(options: MailOptions): Promise<void> {
         host: 'smtp.gmail.com',
         port: 465,
         auth: {
-            user: 'Usman.icet11@gmail.com',
-            pass: 'bsyr mcoe atrj lmqc'
+            user: 'aqibjawad123@gmail.com',
+            pass: 'yplq uiva xcah btik'
         }
     });
 

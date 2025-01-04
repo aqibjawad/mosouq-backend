@@ -6,15 +6,39 @@ import { generateRandomSixDigitNumber } from "../../helpers/functions";
 import CategoryModel from "../category/category.model";
 import SubCategoryModel from "../subcategory/subcategory.model";
 
-const generateToken = (_id: string) => jwt.sign({ _id }, process.env.JWT_SECRET!, { expiresIn: "3d" });
+const generateToken = (_id: string) =>
+  jwt.sign({ _id }, process.env.JWT_SECRET!, { expiresIn: "3d" });
 
 export const signupBusiness = async (req: any, res: any) => {
   try {
-    const { email, name, company, phone, role, country, terms, url, title, website } = req.body;
+    const {
+      email,
+      name,
+      company,
+      phone,
+      role,
+      country,
+      terms,
+      url,
+      title,
+      website,
+    } = req.body;
 
-    if (await Auth.findOne({ email }).lean()) throw new Error("Email is already in use");
+    if (await Auth.findOne({ email }).lean())
+      throw new Error("Email is already in use");
 
-    const user = await Auth.create({ email, name, company, phone, role, country, terms, url, title, website });
+    const user = await Auth.create({
+      email,
+      name,
+      company,
+      phone,
+      role,
+      country,
+      terms,
+      url,
+      title,
+      website,
+    });
     const token = generateToken(user.id);
     const otp = generateRandomSixDigitNumber();
     const mailToken = generateToken(`${user._id}:${email}:${otp}`);
@@ -28,14 +52,14 @@ export const signupBusiness = async (req: any, res: any) => {
     //       <h2>Activate Your Account</h2>
     //       <p>We're happy to have you here, ${name}.</p>
     //       <p>To activate your account, verify that this is your email. Didn't sign up with Trustpilot recently? Please let our Support Team know.</p>
-    //       <a href="http://localhost:3002/business-signup-password?token=${mailToken}" 
+    //       <a href="http://localhost:3002/business-signup-password?token=${mailToken}"
     //       style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Activate Account</a>
     //     </div>
     //   `,
     // });
 
     sendMail({
-      email, 
+      email,
       subject: "Verify Account",
       message: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -58,23 +82,25 @@ export const signupBusiness = async (req: any, res: any) => {
 
 export const signupBusinessAdmin = async (req: any, res: any) => {
   try {
-    const { email, password, name, company, role, country, website, phone } = req.body;
+    const { email, password, name, company, role, country, website, phone } =
+      req.body;
 
-    if (await Auth.findOne({ email }).lean()) throw new Error("Email is already in use");
+    if (await Auth.findOne({ email }).lean())
+      throw new Error("Email is already in use");
 
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await Auth.create({ 
-      email, 
-      password: hashedPassword, 
-      name, 
-      company, 
-      role, 
+    const user = await Auth.create({
+      email,
+      password: hashedPassword,
+      name,
+      company,
+      role,
       country,
       website,
-      phone
+      phone,
     });
 
     const token = generateToken(user.id);
@@ -82,7 +108,7 @@ export const signupBusinessAdmin = async (req: any, res: any) => {
     const mailToken = generateToken(`${user._id}:${email}:${otp}`);
 
     sendMail({
-      email, 
+      email,
       subject: "Verify Account",
       message: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -90,8 +116,10 @@ export const signupBusinessAdmin = async (req: any, res: any) => {
           <h2>Activate Your Account</h2>
           <p>We're happy to have you here, ${name}.</p>
           <p>To activate your account, verify that this is your email. Didn't sign up with Trustpilot recently? Please let our Support Team know.</p>
-          <a href="https://business.mosouq.ae/business-signup-password?token=${mailToken}" 
-          style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Activate Account</a>
+         <a href="https://business.mosouq.ae/business-signup-password?token=${mailToken}" 
+          style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">
+           Account
+          </a>
         </div>
       `,
     });
@@ -147,7 +175,19 @@ export const loginAuth = async (req: any, res: any) => {
     if (!match) throw new Error("Incorrect password");
 
     const token = generateToken(user.id);
-    res.status(200).json({ token, user: { _id: user._id, email: user.email, name: user.name, Role: user.role, Country: user.country }, message: "Login Successful" });
+    res
+      .status(200)
+      .json({
+        token,
+        user: {
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+          Role: user.role,
+          Country: user.country,
+        },
+        message: "Login Successful",
+      });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -166,7 +206,19 @@ export const googleLogin = async (req: any, res: any) => {
     if (!user) throw new Error("Incorrect Email");
 
     const token = generateToken(user.id);
-    res.status(200).json({ token, user: { _id: user._id, email: user.email, name: user.name, Role: user.role, Country: user.country }, message: "Login Successful" });
+    res
+      .status(200)
+      .json({
+        token,
+        user: {
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+          Role: user.role,
+          Country: user.country,
+        },
+        message: "Login Successful",
+      });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -174,7 +226,9 @@ export const googleLogin = async (req: any, res: any) => {
 
 export const getUsers = async (req: any, res: any) => {
   try {
-    const filter: any = req.query.first_name ? { first_name: req.query.first_name } : {};
+    const filter: any = req.query.first_name
+      ? { first_name: req.query.first_name }
+      : {};
     const users = await Auth.find(filter);
     res.status(200).json(users);
   } catch (error) {
@@ -196,7 +250,7 @@ export const getUserById = async (req: any, res: any) => {
 export const searchBusiness = async (req: any, res: any) => {
   try {
     const { name } = req.query;
-    const data = await Auth.find({ name: { $regex: new RegExp(name, 'i') } });
+    const data = await Auth.find({ name: { $regex: new RegExp(name, "i") } });
     res.status(200).json(data);
   } catch (error) {
     console.error("Error occurred while fetching businesses:", error);
@@ -208,9 +262,9 @@ export const searchAll = async (req: any, res: any) => {
   try {
     const { name } = req.query;
     const [businesses, categories, subCategories] = await Promise.all([
-      Auth.find({ name: { $regex: new RegExp(name, 'i') } }),
-      CategoryModel.find({ name: { $regex: new RegExp(name, 'i') } }),
-      SubCategoryModel.find({ name: { $regex: new RegExp(name, 'i') } })
+      Auth.find({ name: { $regex: new RegExp(name, "i") } }),
+      CategoryModel.find({ name: { $regex: new RegExp(name, "i") } }),
+      SubCategoryModel.find({ name: { $regex: new RegExp(name, "i") } }),
     ]);
     res.status(200).json({ data: { businesses, categories, subCategories } });
   } catch (error) {
@@ -229,7 +283,8 @@ export const verifyOtp = async (req: any, res: any) => {
 
     const { email, otp } = tokenData;
     const user = await Auth.findOne({ email, otp });
-    if (!user) return res.status(404).json({ message: "URL expired, please try again" });
+    if (!user)
+      return res.status(404).json({ message: "URL expired, please try again" });
     res.status(200).json(user);
   } catch (error) {
     console.error(error);
@@ -248,4 +303,3 @@ export const deleteUserById = async (req: any, res: any) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-

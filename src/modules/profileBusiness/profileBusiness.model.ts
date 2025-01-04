@@ -18,6 +18,8 @@ export interface IAuth extends Document {
   images?: string[];
   logo: string;
   isOpen24_7: boolean;
+  seoTitle: string;
+  seoDescrp: string;
   businesshours?: Array<{
     day: string;
     fromTime: string;
@@ -84,6 +86,14 @@ const AuthSchema = new Schema<IAuth>(
       required: false,
     },
     logo: {
+      type: String,
+      required: false,
+    },
+    seoTitle: {
+      type: String,
+      required: false,
+    },
+    seoDescrp: {
       type: String,
       required: false,
     },
