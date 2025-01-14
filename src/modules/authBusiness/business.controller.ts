@@ -67,7 +67,7 @@ export const signupBusiness = async (req: any, res: any) => {
           <h2>Activate Your Account</h2>
           <p>We're happy to have you here, ${name}.</p>
           <p>To activate your account, verify that this is your email. Didn't sign up with Trustpilot recently? Please let our Support Team know.</p>
-          <a href="https://business.mosouq.ae/business-signup-password?token=${mailToken}" 
+          <a href="http://localhost:3011/business-signup-password?token=${mailToken}" 
           style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Activate Account</a>
         </div>
       `,

@@ -255,6 +255,7 @@ export const getProfile = async (req: Request, res: Response) => {
             email: authProfile.email,
             phone: authProfile.phone,
             website: authProfile.website,
+            company: authProfile.company,
           }
         : null,
     };
