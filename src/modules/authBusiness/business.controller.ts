@@ -85,9 +85,6 @@ export const signupBusinessAdmin = async (req: any, res: any) => {
     const { email, password, name, company, role, country, website, phone } =
       req.body;
 
-    if (await Auth.findOne({ email }).lean())
-      throw new Error("Email is already in use");
-
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -112,7 +109,6 @@ export const signupBusinessAdmin = async (req: any, res: any) => {
       subject: "Verify Account",
       message: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <img src="URL_TO_YOUR_LOGO" alt="Company Logo" style="width: 100px;"/>
           <h2>Activate Your Account</h2>
           <p>We're happy to have you here, ${name}.</p>
           <p>To activate your account, verify that this is your email. Didn't sign up with Trustpilot recently? Please let our Support Team know.</p>
@@ -175,19 +171,17 @@ export const loginAuth = async (req: any, res: any) => {
     if (!match) throw new Error("Incorrect password");
 
     const token = generateToken(user.id);
-    res
-      .status(200)
-      .json({
-        token,
-        user: {
-          _id: user._id,
-          email: user.email,
-          name: user.name,
-          Role: user.role,
-          Country: user.country,
-        },
-        message: "Login Successful",
-      });
+    res.status(200).json({
+      token,
+      user: {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        Role: user.role,
+        Country: user.country,
+      },
+      message: "Login Successful",
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -206,19 +200,17 @@ export const googleLogin = async (req: any, res: any) => {
     if (!user) throw new Error("Incorrect Email");
 
     const token = generateToken(user.id);
-    res
-      .status(200)
-      .json({
-        token,
-        user: {
-          _id: user._id,
-          email: user.email,
-          name: user.name,
-          Role: user.role,
-          Country: user.country,
-        },
-        message: "Login Successful",
-      });
+    res.status(200).json({
+      token,
+      user: {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        Role: user.role,
+        Country: user.country,
+      },
+      message: "Login Successful",
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
