@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IAuth extends Document {
   businessName: string;
@@ -25,6 +25,7 @@ export interface IAuth extends Document {
     fromTime: string;
     toTime: string;
   }>;
+  tags?: string[];
 }
 
 const AuthSchema = new Schema<IAuth>(
@@ -55,15 +56,15 @@ const AuthSchema = new Schema<IAuth>(
     },
     businessId: {
       type: Schema.Types.ObjectId,
-      ref: 'business-auth',
+      ref: "business-auth",
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: 'category',
+      ref: "category",
     },
     subcategory: {
       type: Schema.Types.ObjectId,
-      ref: 'subcategory',
+      ref: "subcategory",
     },
     businessPictures: {
       type: [String],
@@ -100,7 +101,7 @@ const AuthSchema = new Schema<IAuth>(
     isOpen24_7: {
       type: Boolean,
       default: false, // Set a default value
-      required: false
+      required: false,
     },
     businesshours: {
       type: [
@@ -112,8 +113,12 @@ const AuthSchema = new Schema<IAuth>(
       ],
       required: false,
     },
+    tags: {
+      type: [String],
+      required: false,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<IAuth>('profileBusiness', AuthSchema);
+export default mongoose.model<IAuth>("profileBusiness", AuthSchema);

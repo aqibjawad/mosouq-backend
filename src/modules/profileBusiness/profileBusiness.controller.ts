@@ -32,8 +32,15 @@ export const addRecord = async (req: Request, res: Response) => {
       businesshours,
       isOpen24_7,
       seoTitle,
-      seoDescrp
+      seoDescrp,
+      tags, // Add tags to destructuring
     } = req.body;
+
+    // Convert tags string to array if it comes as comma-separated string
+    const tagsArray =
+      typeof tags === "string"
+        ? tags.split(",").map((tag) => tag.trim())
+        : tags;
 
     const oldData = await Auth.findOne({ businessId });
     if (oldData) {
@@ -61,6 +68,7 @@ export const addRecord = async (req: Request, res: Response) => {
             isOpen24_7,
             seoTitle,
             seoDescrp,
+            tags: tagsArray, // Add tags to update
           },
         }
       );
@@ -86,6 +94,7 @@ export const addRecord = async (req: Request, res: Response) => {
         seoTitle,
         seoDescrp,
         businesshours: JSON.parse(businesshours),
+        tags: tagsArray, // Add tags to create
       });
     }
 
@@ -123,7 +132,7 @@ export const updateRecord = async (
       location,
       logo,
       seoTitle,
-      seoDescrp
+      seoDescrp,
     } = req["validData"];
 
     const oldData = await Auth.findOne({ businessId });
