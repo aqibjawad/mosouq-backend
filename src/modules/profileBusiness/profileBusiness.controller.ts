@@ -414,8 +414,43 @@ export const searchAll = async (req: Request, res: Response) => {
 export const getAll = async (req: Request, res: Response) => {
   try {
     const businessProfiles = await Auth.find({});
+
+    // Get all business IDs to fetch auth details
+    const businessIds = businessProfiles.map((profile) => profile.businessId);
+
+    // Fetch all auth profiles in one query
+    const authProfiles = await BusinessAuthModel.find({
+      _id: {
+        $in: businessIds,
+        // No need to convert to ObjectId since businessId is already an ObjectId
+      },
+    });
+
+    // Create a map of business ID to auth profile for easier lookup
+    const authProfileMap = new Map(
+      authProfiles.map((profile) => [profile._id.toString(), profile])
+    );
+
+    // Combine business and auth details
+    const completeProfiles = businessProfiles.map((profile) => {
+      const authProfile = authProfileMap.get(profile.businessId?.toString());
+
+      return {
+        ...profile.toObject(),
+        authDetails: authProfile
+          ? {
+              name: authProfile.name,
+              email: authProfile.email,
+              phone: authProfile.phone,
+              website: authProfile.website,
+              company: authProfile.company,
+            }
+          : null,
+      };
+    });
+
     return res.status(200).json({
-      businessProfiles,
+      businessProfiles: completeProfiles,
     });
   } catch (error) {
     return res.status(400).json({ error: error.message });
