@@ -385,29 +385,71 @@ export const searchAll = async (req: Request, res: Response) => {
   try {
     const { query } = req.query;
 
-    if (!query) {
-      throw new Error("query is required");
+    if (!query || typeof query !== "string") {
+      return res
+        .status(400)
+        .json({ error: "Valid query parameter is required" });
     }
 
-    const regexQuery = new RegExp(query, "i");
+    const trimmedQuery = query.trim();
+    const regexQuery = new RegExp(trimmedQuery, "i");
 
-    const businessProfiles = await Auth.find({
-      businessName: { $regex: regexQuery },
-    });
-    const categories = await CategoryModel.find({
-      name: { $regex: regexQuery },
-    });
-    const subCategories = await SubcategoryModel.find({
-      sub_name: { $regex: regexQuery },
-    });
+    // Run queries in parallel for better performance
+    const [businessProfiles, categories, subCategories] = await Promise.all([
+      Auth.find({ businessName: { $regex: regexQuery } }).lean(),
+      CategoryModel.find({ name: { $regex: regexQuery } }).lean(),
+      SubcategoryModel.find({ sub_name: { $regex: regexQuery } }).lean(),
+    ]);
+
+    // Find all businesses that belong to matching categories
+    const categoryIds = categories.map((cat) => cat._id);
+    const businessesInCategories =
+      categoryIds.length > 0
+        ? await Auth.find({ category: { $in: categoryIds } }).lean()
+        : [];
+
+    // Find all businesses that belong to matching subcategories
+    const subcategoryIds = subCategories.map((subcat) => subcat._id);
+    const businessesInSubcategories =
+      subcategoryIds.length > 0
+        ? await Auth.find({ subcategory: { $in: subcategoryIds } }).lean()
+        : [];
+
+    // Combine all business results and remove duplicates
+    const allBusinessIds = new Set();
+    const allBusinesses = [];
+
+    // Helper function to add businesses without duplicates
+    const addBusinessesWithoutDuplicates = (businesses) => {
+      businesses.forEach((business) => {
+        const businessId = business._id.toString();
+        if (!allBusinessIds.has(businessId)) {
+          allBusinessIds.add(businessId);
+          allBusinesses.push(business);
+        }
+      });
+    };
+
+    // Add all businesses to the combined result set
+    addBusinessesWithoutDuplicates(businessProfiles);
+    addBusinessesWithoutDuplicates(businessesInCategories);
+    addBusinessesWithoutDuplicates(businessesInSubcategories);
 
     return res.status(200).json({
-      businessProfiles,
+      businessProfiles: allBusinesses,
       categories,
       subCategories,
+      total: {
+        businesses: allBusinesses.length,
+        categories: categories.length,
+        subcategories: subCategories.length,
+      },
     });
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    console.error("Search error:", error);
+    return res
+      .status(500)
+      .json({ error: error.message || "An error occurred during search" });
   }
 };
 
