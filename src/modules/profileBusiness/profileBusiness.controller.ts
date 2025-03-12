@@ -498,3 +498,43 @@ export const getAll = async (req: Request, res: Response) => {
     return res.status(400).json({ error: error.message });
   }
 };
+
+export const deleteBusinessProfile = async (req: Request, res: Response) => {
+  try {
+    const { businessId } = req.params;
+
+    if (!businessId) {
+      return res.status(400).json({ message: "Business ID is required" });
+    }
+
+    // Validate if the businessId is a valid ObjectId
+    if (!ObjectId.isValid(businessId)) {
+      return res.status(400).json({ message: "Invalid Business ID format" });
+    }
+
+    // Delete the profile from the Auth model
+    const deletedProfile = await Auth.findOneAndDelete({
+      businessId: new ObjectId(businessId),
+    });
+
+    // Delete the authentication details from BusinessAuthModel
+    const deletedAuthProfile = await BusinessAuthModel.findByIdAndDelete(
+      businessId
+    );
+
+    if (!deletedProfile && !deletedAuthProfile) {
+      return res.status(404).json({ message: "Business profile not found" });
+    }
+
+    return res.status(200).json({
+      message: "Business profile deleted successfully",
+      deletedProfile: deletedProfile ? true : false,
+      deletedAuthDetails: deletedAuthProfile ? true : false,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to delete business profile",
+      error: error.message,
+    });
+  }
+};

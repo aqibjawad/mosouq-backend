@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { addRecord, cateogyBusiness, getAll, getProfile, searchAll, subCateogyBusiness, updateBusinessImages, uploadMultipleFiles } from './profileBusiness.controller';
+import { addRecord, cateogyBusiness, getAll, getProfile, searchAll, subCateogyBusiness, updateBusinessImages, uploadMultipleFiles, deleteBusinessProfile } from './profileBusiness.controller';
 import { validateKeyInputs } from '../../middlewares/validate';
 import { uploadToMemory } from '../../helpers/upload';
 
@@ -17,6 +17,8 @@ router.get('/category-business', cateogyBusiness);
 router.get('/subcategory-business', subCateogyBusiness);
 router.get('/searchAll', searchAll);
 router.get('/getAll', getAll);
+
+router.delete('/delete/:businessId', deleteBusinessProfile);
 
 export default router;
  
