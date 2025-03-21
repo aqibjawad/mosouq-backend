@@ -7,6 +7,8 @@ export interface IAuth extends Document {
   phone: string;
   city?: string;
   address?: string;
+  area?: string;
+
   country: string;
   businessId: Schema.Types.ObjectId;
   category: Schema.Types.ObjectId;
@@ -47,6 +49,10 @@ const AuthSchema = new Schema<IAuth>(
       required: false,
     },
     address: {
+      type: String,
+      required: false,
+    },
+    area: {
       type: String,
       required: false,
     },
